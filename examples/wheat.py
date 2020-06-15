@@ -4,10 +4,11 @@ import pandas as pd
 import albumentations as A
 
 
-class WheatParser(DefaultImageInfoParser, FasterRCNNParser):
+class WheatImageInfoParser(DefaultImageInfoParser):
     def __init__(self, df, source):
         self.df = df
         self.source = source
+        # TODO: IDMap is not ideal
         self.imageid_map = IDMap()
 
     def __iter__(self):
@@ -35,11 +36,58 @@ class WheatParser(DefaultImageInfoParser, FasterRCNNParser):
         return [BBox.from_xywh(*np.fromstring(o.bbox[1:-1], sep=","))]
 
 
+class WheatTestParser(Parser, FilepathParserMixin):
+    def __init__(self, img_dir):
+        self.filepaths = get_image_files(img_dir)
+        self.imageid_map = IDMap()
+
+    def __iter__(self):
+        yield from self.filepaths
+
+    def __len__(self):
+        return len(self.filepaths)
+
+    def imageid(self, o) -> int:
+        return o.stem
+
+    def filepath(self, o) -> Union[str, Path]:
+        return o
+
+
+source = Path("/Users/lgvaz/.data/wheat")
+df = pd.read_csv(source / "train.csv")
+
+test_parser = WheatTestParser(source / "test")
+test_records = test_parser.parse()[0]
+test_dataset = Dataset(test_records)
+test_dataloader = MantisFasterRCNN.get_test_dataloader(
+    dataset=test_dataset, batch_size=2
+)
+
+
+sample = test_dataset[0]
+sample.keys()
+sample["img"]
+
+test_dataloader = MantisFasterRCNN.dataloader(dataset=test_dataset)
+
+batch = first(test_dataloader)
+
+MantisFasterRCNN.dataloader(test_dataset)
+
+test_record = test_records[0]
+
+train_parser = WheatAnnotationParser(df, source / "train")
+train_valid_split = RandomSplitter([0.8, 0.2])
+train_records, valid_records = train_parser.parse(train_valid_split)
+
+
 class WheatModel(MantisFasterRCNN):
     def __init__(
         self,
         n_class: int,
         parser: Parser,
+        test_parser: Parser,
         batch_size: int,
         train_tfm: Transform = None,
         valid_tfm: Transform = None,
@@ -86,4 +134,9 @@ model = WheatModel(2, parser, train_tfm=train_tfm, batch_size=4, num_workers=8)
 
 
 trainer = Trainer(max_epochs=1, gpus=1)
+trainer = Trainer()
+trainer.test
 trainer.fit(model)
+
+res = trainer.test(model=model, test_dataloaders=test_dataloader)
+test_dataloader

@@ -62,9 +62,20 @@ class MantisRCNN(MantisModule, ABC):
 
         return DataLoader(dataset=dataset, collate_fn=collate_fn, **kwargs)
 
+    @classmethod
+    def get_test_dataloader(cls, dataset, **kwargs) -> DataLoader:
+        def collate_fn(batch):
+            return [cls.build_test_sample(**o) for o in batch]
+
+        return DataLoader(dataset=dataset, collate_fn=collate_fn, **kwargs)
+
+    @staticmethod
+    def build_test_sample(img, **kwargs):
+        return im2tensor(img)
+
     @staticmethod
     @abstractmethod
-    def build_training_sample(self, *args, **kwargs):
+    def build_training_sample(*args, **kwargs):
         """
         Converts a record to a format understood by the model.
         """

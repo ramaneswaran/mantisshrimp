@@ -1,0 +1,1161 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. FasterRCNN Quickstart &mdash; mantisshrimp  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="1. Intro to Mantisshrimp Parsers" href="../mantisshrimp_data/intro_parser.html" />
+    <link rel="prev" title="Faster RCNN Advanced Tutorial" href="faster_rcnn_adv.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> mantisshrimp
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme_link.html">MantisShrimp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to MantisShrimp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../faqs.html">FAQs</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Mantisshrimp Models:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="faster_rcnn_adv.html">Faster RCNN Advanced Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. FasterRCNN Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Prerequisites">Prerequisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Local-machine">Local machine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Colab">Colab</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Imports">Imports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Dataset">Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Load">Load</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Parser">Parser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Visualize">Visualize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Additional-functions">Additional functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Transforms">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Model">Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#DataLoader">DataLoader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Metrics">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Training">Training</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fastai">fastai</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pytorch-lightning">pytorch-lightning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Inference">Inference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Load-a-model">Load a model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Predict-all-at-once">Predict all at once</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Predict-in-chunks">Predict in chunks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Mantisshrimp Data:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mantisshrimp_data/intro_parser.html">1. Intro to Mantisshrimp Parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mantisshrimp_data/parsers_voc.html">2. VOC Parser with FasterRCNN</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Mantisshrimp Hub:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mantisshrimp_hub/hub_detr_finetune_pennfundan.html">1. Fine-tune DETR on PenFundan</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mantisshrimp_hub/hub_wheat_finetun.html">2. Fine-tune Detr on Wheat</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">mantisshrimp</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>1. FasterRCNN Quickstart</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/tutorials/mantisshrimp_models/faster_rcnn_quickstart.nblink.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<p><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></p>
+<div class="section" id="1.-FasterRCNN-Quickstart">
+<h1>1. FasterRCNN Quickstart<a class="headerlink" href="#1.-FasterRCNN-Quickstart" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#Prerequisites" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Local-machine">
+<h3>Local machine<a class="headerlink" href="#Local-machine" title="Permalink to this headline">¶</a></h3>
+<p>Be sure you already installed all the dependencies by following the instructions <a class="reference external" href="https://lgvaz.github.io/mantisshrimp/readme_link.html#manual-install">here</a>.</p>
+<p>In this tutorial we make the use of two optional dependencies: <code class="docutils literal notranslate"><span class="pre">fastai2</span></code> and <code class="docutils literal notranslate"><span class="pre">pytorch-lightning</span></code>, for training the model it’s required that you install at least one of them.</p>
+<p>For transforming our data, we’re going to use the <a class="reference external" href="https://github.com/albumentations-team/albumentations">albumentations</a> library.</p>
+<p>All can be installed by running the following on your terminal:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install fastai2
+pip install pytorch-lightning
+pip install albumentations
+</pre></div>
+</div>
+</div>
+<div class="section" id="Colab">
+<h3>Colab<a class="headerlink" href="#Colab" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">First, enable the GPU runtime:</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">Runtime</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Change</span> <span class="pre">runtime</span> <span class="pre">type</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">Hardware</span> <span class="pre">accelerator</span> <span class="pre">dropdown</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">GPU</span></code></div>
+</div>
+<p>Install the required dependencies by running the following piece of code:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>pip install pytorch-lightning
+<span class="o">!</span>pip install fastai2
+<span class="o">!</span>pip install -U <span class="s1">&#39;git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI&#39;</span>
+<span class="o">!</span>pip install albumentations --upgrade
+<span class="o">!</span>pip install git+git://github.com/lgvaz/mantisshrimp.git
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Imports">
+<h2>Imports<a class="headerlink" href="#Imports" title="Permalink to this headline">¶</a></h2>
+<p>Let’s start by importing everything that we need:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mantisshrimp.imports</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">mantisshrimp</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">albumentations</span> <span class="k">as</span> <span class="nn">A</span>
+</pre></div>
+</div>
+</div>
+<p>Mantisshrimp makes use of wildcard imports (the <code class="docutils literal notranslate"><span class="pre">*</span></code> imports) so you can easily get everything you need.</p>
+<p>The line <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">mantisshrimp.imports</span> <span class="pre">import</span> <span class="pre">*</span></code> will import commonly used packages like <code class="docutils literal notranslate"><span class="pre">np</span></code> and <code class="docutils literal notranslate"><span class="pre">plt</span></code>.</p>
+<p>The line <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">mantisshrimp</span> <span class="pre">import</span> <span class="pre">*</span></code> will import all mantisshrimp modules needed for development.</p>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note for advanced pythonistas:</strong></p>
+<p>If you’re an experienced pythonista you might be worried about using wildcard imports, they’re generally considered dangerous and bad practice.</p>
+<p>But fear not! When developing the library we make extra sure that no name conflict happens, so everything is safe.</p>
+</div>
+</div>
+<div class="section" id="Dataset">
+<h2>Dataset<a class="headerlink" href="#Dataset" title="Permalink to this headline">¶</a></h2>
+<p>For this tutorial we’re going to use the <a class="reference external" href="https://www.robots.ox.ac.uk/~vgg/data/pets/">pets</a> dataset, what a better way to start than with dogs and cats am I right?</p>
+<p>Mantisshrimp has a community maintaned module that <strong>automatically</strong> downloads the dataset for you. Not surprisingly, it’s called <code class="docutils literal notranslate"><span class="pre">datasets</span></code>.</p>
+<div class="section" id="Load">
+<h3>Load<a class="headerlink" href="#Load" title="Permalink to this headline">¶</a></h3>
+<p>The following will download the dataset (or used a cached version if you already downloaded) and return the path to it:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "e833499e98534c949c7d5d2bf37a6462", "version_minor": 0, "version_major": 2}</script></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "6d22c330aea1460fbaf342fda25c9752", "version_minor": 0, "version_major": 2}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<p>We can see where the dataset is downloaded by printing the contents of <code class="docutils literal notranslate"><span class="pre">data_dir</span></code>:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/root/.mantisshrimp/data/pets
+</pre></div></div>
+</div>
+<p>A new directory called <code class="docutils literal notranslate"><span class="pre">.mantisshrimp</span></code> will be created in your home directory, anything mantisshrimp needs to cache will be stored there.</p>
+</div>
+<div class="section" id="Parser">
+<h3>Parser<a class="headerlink" href="#Parser" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Parser</span></code> is one of the most important concepts of mantisshrimp, it’s what allow us to work with <strong>any</strong> annotation format.</p>
+<p>The basic idea of a parser is to convert any custom format to something the library can understand. We provide a wide variety of parsers via the <code class="docutils literal notranslate"><span class="pre">datasets</span></code> modules (each dataset will come with it’s own parser), but you might still need to create a custom parser for your custom dataset. Fear not! Creating parsers is very easy, after you’re finished with this tutorial, check <a class="reference external" href="https://lgvaz.github.io/mantisshrimp/tutorials/mantisshrimp_data/intro_parser.html">this</a> one to understand how to do
+so.</p>
+<p>As I previously said, each dataset will come with it’s own custom parser, so let’s grab the one for pets!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">datasets</span></code> interface will always have <strong>at least</strong> two functions: <code class="docutils literal notranslate"><span class="pre">load</span></code> and <code class="docutils literal notranslate"><span class="pre">parser</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">parser</span></code> will always receive <strong>at least</strong> one argument, the path to the directory holding the data.</p>
+<p>Additional parameters might be avaiable for the dataset your using, be sure to check the function documentation.</p>
+<p>For pets, we have the optional parameter <code class="docutils literal notranslate"><span class="pre">mask</span></code> when calling <code class="docutils literal notranslate"><span class="pre">parser</span></code> that defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>, enabling this option will also return segmentation masks for our images (and in that case, we could train a <code class="docutils literal notranslate"><span class="pre">MaskRCNN</span></code>).</p>
+<p>Other custom functions might be available for your dataset (like visualization functions), check everything that is avaialable by reading the dataset documentation (work in progress) or by using the power of autocompletion (type <code class="docutils literal notranslate"><span class="pre">datasets.pets.</span></code> and see what your editor suggests).</p>
+<p>If your editor does not support autocompletion, you can use this little trick:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">dir</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Next step is to define the <code class="docutils literal notranslate"><span class="pre">train/valid</span></code> splits for the data, let’s use random splits for this one:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data_splitter</span> <span class="o">=</span> <span class="n">RandomSplitter</span><span class="p">([</span><span class="o">.</span><span class="mi">8</span><span class="p">,</span> <span class="o">.</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>And to actually parse the data, we call the <code class="docutils literal notranslate"><span class="pre">parse</span></code> method passing the <code class="docutils literal notranslate"><span class="pre">data_splitter</span></code>.</p>
+<p>This will loop through all the data and will return two lists of records, one for each split defined in <code class="docutils literal notranslate"><span class="pre">RandomSplitter</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_records</span><span class="p">,</span> <span class="n">valid_records</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data_splitter</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d0051d8702014f4fa69415eb6b1e237b", "version_minor": 0, "version_major": 2}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>If you instead defined 3 splits in <code class="docutils literal notranslate"><span class="pre">RandomSplitter</span></code>, calling <code class="docutils literal notranslate"><span class="pre">parse</span></code> would return 3 lists of records.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Important</strong></p>
+<p>A record is a dictonary that contains all parsed fields defined by the parser used. No matter what format the annotations were in, a record will always have a common structure, thanks to this, all library functions/models will always work on your data.</p>
+</div>
+</div>
+<div class="section" id="Visualize">
+<h3>Visualize<a class="headerlink" href="#Visualize" title="Permalink to this headline">¶</a></h3>
+<p>We can visualize a record with <code class="docutils literal notranslate"><span class="pre">show_record</span></code>, it will display the image and any annotations it has.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">show_record</span><span class="p">(</span><span class="n">train_records</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_37_0.png" src="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_37_0.png" />
+</div>
+</div>
+<p>You might want to visualize multiple records at once instead of just one, mantisshrimp has a way of transforming <strong>any</strong> <code class="docutils literal notranslate"><span class="pre">show</span></code> function (even your custom ones) that works on a single item into a function that display multiple items.</p>
+<p>The first step, is to create a list of records:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">records</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_records</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<p>Then, for each record, you take the original show function (in this case, <code class="docutils literal notranslate"><span class="pre">show_record</span></code>) and wrap it with <code class="docutils literal notranslate"><span class="pre">partial</span></code>, passing the same arguemnts as before.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">show_record_partials</span> <span class="o">=</span> <span class="p">[</span><span class="n">partial</span><span class="p">(</span><span class="n">show_record</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="n">record</span><span class="p">)</span> <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">records</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Now, the only thing left is to call <code class="docutils literal notranslate"><span class="pre">plot_grid</span></code>, passing the list of wrapped <code class="docutils literal notranslate"><span class="pre">show_record</span></code> and the number of columns we want our grid to have. Since we have 6 records, let’s use 3 columns (and automatically 2 rows).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plot_grid</span><span class="p">(</span><span class="n">show_record_partials</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_43_0.png" src="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_43_0.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Why not show_records?:</strong></p>
+<p>You might be tempted to ask: “Why not just have a <code class="docutils literal notranslate"><span class="pre">show_records</span></code> function instead of this <code class="docutils literal notranslate"><span class="pre">partial</span></code> and <code class="docutils literal notranslate"><span class="pre">plot_grid</span></code> stuff?”.</p>
+<p>That’s a very valid question! But a <code class="docutils literal notranslate"><span class="pre">show_records</span></code> function is limited to only that, showing records. At some point you will need to write a custom visualization function. We believe that providing the tools to help you write that function heavily outweights the easability of <code class="docutils literal notranslate"><span class="pre">show_records</span></code>.</p>
+<p>As I said before, you can transform <strong>any</strong> function that shows a single image into a function that shows any number of images in a grid view.The only requirement to functions you pass to <code class="docutils literal notranslate"><span class="pre">plot_grid</span></code> is that they should take a <code class="docutils literal notranslate"><span class="pre">plt.Axes</span></code> as an argument (named <code class="docutils literal notranslate"><span class="pre">ax</span></code>), and you use this <code class="docutils literal notranslate"><span class="pre">ax</span></code> to plot. Take a look at the source code of <code class="docutils literal notranslate"><span class="pre">show_img</span></code> for a very simple example.</p>
+</div>
+</div>
+<div class="section" id="Additional-functions">
+<h3>Additional functions<a class="headerlink" href="#Additional-functions" title="Permalink to this headline">¶</a></h3>
+<p>The person who implemented support for the pets dataset also included a function for visualizing the height/width distribution of the images, let’s take a look at that:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_records</span> <span class="o">=</span> <span class="n">train_records</span> <span class="o">+</span> <span class="n">valid_records</span>
+<span class="n">_</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="o">.</span><span class="n">plot_size_histogram</span><span class="p">(</span><span class="n">all_records</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_47_0.png" src="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_47_0.png" />
+</div>
+</div>
+<p>It’s a bit hard to see because of the outliers, but it seems majority of images are about 400 pixels in size, we can use this information when defining the transforms in the next step.</p>
+</div>
+</div>
+<div class="section" id="Transforms">
+<h2>Transforms<a class="headerlink" href="#Transforms" title="Permalink to this headline">¶</a></h2>
+<p>Transforms is an essential stage of any training pipeline, you can find a multitude of different transforms libraries online: <a class="reference external" href="https://github.com/albumentations-team/albumentations">albumentations</a>, <a class="reference external" href="https://github.com/MIPT-Oulu/solt">solt</a>, <a class="reference external" href="https://pytorch.org/docs/stable/torchvision/transforms.html#transforms-on-pil-image">torchvision</a>, only to cite a few.</p>
+<p>With mantisshrimp you can use any transforms library, you just need to inherit and override all abstract methods of the <code class="docutils literal notranslate"><span class="pre">Transform</span></code> class.</p>
+<p>For simplicity, we currently provide out of the box support for the widely used <a class="reference external" href="https://github.com/albumentations-team/albumentations">albumentations</a> library, and we plan to add more.</p>
+<p>Let’s define a list of transforms to be applied to the train and valid data. For validation we only use deterministic transforms like resizing and normalizing, but for training, we also define augmentation (random) transforms like rotating the image by a random ammount, this means that each time we use these transforms we are going to get different results.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">imagenet_mean</span><span class="p">,</span> <span class="n">imagenet_std</span> <span class="o">=</span> <span class="n">imagenet_stats</span>
+
+<span class="n">valid_tfms</span> <span class="o">=</span> <span class="n">AlbuTransform</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">LongestMaxSize</span><span class="p">(</span><span class="mi">384</span><span class="p">),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">imagenet_mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">imagenet_std</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">train_tfms</span> <span class="o">=</span> <span class="n">AlbuTransform</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">LongestMaxSize</span><span class="p">(</span><span class="mi">384</span><span class="p">),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">RandomSizedBBoxSafeCrop</span><span class="p">(</span><span class="mi">320</span><span class="p">,</span> <span class="mi">320</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mf">0.3</span><span class="p">),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">HorizontalFlip</span><span class="p">(),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">ShiftScaleRotate</span><span class="p">(</span><span class="n">rotate_limit</span><span class="o">=</span><span class="mi">20</span><span class="p">),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">RGBShift</span><span class="p">(</span><span class="n">always_apply</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">RandomBrightnessContrast</span><span class="p">(),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">Blur</span><span class="p">(</span><span class="n">blur_limit</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">mean</span><span class="o">=</span><span class="n">imagenet_mean</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="n">imagenet_std</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Important:</strong></p>
+<p>The order of the transforms in the list matter!</p>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Dataset<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Not to be confused with our previous <code class="docutils literal notranslate"><span class="pre">datasets</span></code> module, <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> is a class that combines the records and transforms.</p>
+<p>For creating a <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> we just need need to pass the parsed records from the previous step and optionally the transforms.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">train_records</span><span class="p">,</span> <span class="n">train_tfms</span><span class="p">)</span>
+<span class="n">valid_ds</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">valid_records</span><span class="p">,</span> <span class="n">valid_tfms</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">Let me explain a bit more what a <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> really does:</div>
+<div class="line">* Prepares the record: For example, in the record we just have a filename that points to the image, it’s at this stage that we open the image (same for masks). It’s really simple, take a look at the source <code class="docutils literal notranslate"><span class="pre">mantisshrimp/data/prepare_record.py</span></code> * Apply the transforms to the already prepared record</div>
+</div>
+<p>What is really important is that this operations are applied <strong>lazily</strong>, meaning they are only applied when you index the dataset to get an item.</p>
+<p>This means that, if you have augmentation (random) transforms, each time you get the <strong>same</strong> item from the dataset you’ll get slightly different version of it!</p>
+<p>Let’s visualize it ourselves combining <code class="docutils literal notranslate"><span class="pre">show_sample</span></code> with <code class="docutils literal notranslate"><span class="pre">plot_grid</span></code>:</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Important:</strong></p>
+<p>Because we normalized our images with <code class="docutils literal notranslate"><span class="pre">imagenet_stats</span></code> we now have to denormalize it when showing.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">show_sample</span></code> function receives an optional argument called <code class="docutils literal notranslate"><span class="pre">denormalize_fn</span></code> that we can pass <code class="docutils literal notranslate"><span class="pre">denormalize_imagenet</span></code>.</p>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">train_ds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)]</span>
+<span class="n">show_sample_partials</span> <span class="o">=</span> <span class="p">[</span><span class="n">partial</span><span class="p">(</span><span class="n">show_sample</span><span class="p">,</span> <span class="n">sample</span><span class="o">=</span><span class="n">sample</span><span class="p">,</span> <span class="n">denormalize_fn</span><span class="o">=</span><span class="n">denormalize_imagenet</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+<span class="n">plot_grid</span><span class="p">(</span><span class="n">show_sample_partials</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_60_0.png" src="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_60_0.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Experiment:</strong>.</p>
+<p>Try training you model without any augmentation transforms, how much worse are the results?</p>
+</div>
+</div>
+<div class="section" id="Model">
+<h2>Model<a class="headerlink" href="#Model" title="Permalink to this headline">¶</a></h2>
+<p>This task only requires us to predict bounding boxes, so we can use <code class="docutils literal notranslate"><span class="pre">FasterRCNN</span></code>, the only required argument we need to pass to the model is the number of classes our dataset has (which is simply the length of <code class="docutils literal notranslate"><span class="pre">datasets.pets.CATEGORIES</span></code>) + 1 for the background.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MantisFasterRCNN</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="o">.</span><span class="n">CATEGORIES</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Downloading: &#34;https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth&#34; to /root/.cache/torch/checkpoints/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "d6f541a28db64ef481a5d7f33e26b28c", "version_minor": 0, "version_major": 2}</script></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="DataLoader">
+<h2>DataLoader<a class="headerlink" href="#DataLoader" title="Permalink to this headline">¶</a></h2>
+<p>Each model has its own dataloader, these still are the pytorch <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>s with all know, but with possible modifications. For example, the dataloaders for the RCNN models have a custom collate function.</p>
+<p>To get a dataloader for a specific model you just need to do <code class="docutils literal notranslate"><span class="pre">ModelClass.dataloader</span></code> and pass the same arguments you would pass to a normal pytorch <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>. You can call the method <code class="docutils literal notranslate"><span class="pre">dataloader</span></code> directly on the class or on the instatiated model.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">train_dl</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dataloader</span><span class="p">(</span><span class="n">train_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">valid_dl</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">dataloader</span><span class="p">(</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Important:</strong></p>
+<p>We are currently working on a better interface for the model and dataloader, so this might slighthy change in the following weeks.</p>
+</div>
+</div>
+<div class="section" id="Metrics">
+<h2>Metrics<a class="headerlink" href="#Metrics" title="Permalink to this headline">¶</a></h2>
+<p>Coming soon! We’re working on integrating the <code class="docutils literal notranslate"><span class="pre">pycocotools</span></code> AP metric, stay tuned!</p>
+</div>
+<div class="section" id="Training">
+<h2>Training<a class="headerlink" href="#Training" title="Permalink to this headline">¶</a></h2>
+<p>Mantisshrimp is agnostic to the training engine, so you can use your favorite library for training the model.</p>
+<p>We currently support <a class="reference external" href="https://github.com/fastai/fastai2">fastai2</a> and <a class="reference external" href="https://github.com/PyTorchLightning/pytorch-lightning">pytorch-lightning</a> out of the box, meaning that we have helper functions to ease out the connection. But this does not mean you cannot use other libraries, it just means you might have to write some more code.</p>
+<div class="section" id="fastai">
+<h3>fastai<a class="headerlink" href="#fastai" title="Permalink to this headline">¶</a></h3>
+<p>For getting access to the helper functions to train with fastai, just <code class="docutils literal notranslate"><span class="pre">import</span></code> as follows:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mantisshrimp.engines.fastai</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>When you import the fastai engine as above we internally do: <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">fastai2.vision.all</span> <span class="pre">import</span> <span class="pre">*</span></code> (fastai users might be familiar with this).</p>
+<p>Then we put all the imports into a namespace called <code class="docutils literal notranslate"><span class="pre">fastai</span></code>, so all the functions normally imported by fastai are accessible via <code class="docutils literal notranslate"><span class="pre">fastai.&lt;name&gt;</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">fastai.DataBlock</span></code>.</p>
+</div>
+<p>Just create a <code class="docutils literal notranslate"><span class="pre">Learner</span></code> like you would do in <code class="docutils literal notranslate"><span class="pre">fastai</span></code> and train your model!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">learn</span> <span class="o">=</span> <span class="n">rcnn_learner</span><span class="p">(</span><span class="n">dls</span><span class="o">=</span><span class="p">[</span><span class="n">train_dl</span><span class="p">,</span> <span class="n">valid_dl</span><span class="p">],</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">learn</span><span class="o">.</span><span class="n">fine_tune</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pytorch-lightning">
+<h3>pytorch-lightning<a class="headerlink" href="#pytorch-lightning" title="Permalink to this headline">¶</a></h3>
+<p>Same as we did with fastai, for getting access to the helper functions to train with lightning execute the imports:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mantisshrimp.engines.lightning</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<p>Inherit from <code class="docutils literal notranslate"><span class="pre">RCNNLightningAdapter</span></code> and implement the method <code class="docutils literal notranslate"><span class="pre">configure_optimizers</span></code>.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">class</span> <span class="nc">LightModel</span><span class="p">(</span><span class="n">RCNNLightningAdapter</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">configure_optimizers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">opt</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="mf">2e-4</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">opt</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>If you are used with lightning, you may be wondering what happened with <code class="docutils literal notranslate"><span class="pre">training_step</span></code>, <code class="docutils literal notranslate"><span class="pre">validation_step</span></code> and methods that we normally have to override while using lightning. What happens is that under the hood <code class="docutils literal notranslate"><span class="pre">RCNNLightningAdapter</span></code> is already implement those methods for you (with the additional bennefit of supporting <code class="docutils literal notranslate"><span class="pre">Metric</span></code>s.</p>
+<p>If you need more custom functionality, don’t be afraid of reimplementing those methods, there is no magic happening under the hood, all lightning!</p>
+</div>
+<p>Now, just creat your lightning model by to it the model we created before and the metric you want to use.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">light_model</span> <span class="o">=</span> <span class="n">LightModel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">max_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">gpus</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">light_model</span><span class="p">,</span> <span class="n">train_dataloader</span><span class="p">,</span> <span class="n">valid_dataloader</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Inference">
+<h2>Inference<a class="headerlink" href="#Inference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Load-a-model">
+<h3>Load a model<a class="headerlink" href="#Load-a-model" title="Permalink to this headline">¶</a></h3>
+<div class="line-block">
+<div class="line">I trained the model with <code class="docutils literal notranslate"><span class="pre">fastai</span></code> running <code class="docutils literal notranslate"><span class="pre">fine_tune</span></code> twice and I got the following results:</div>
+<div class="line">* train_loss: 0.06772</div>
+<div class="line">* valid_loss: 0.074435</div>
+</div>
+<p>If you don’t want to wait for your model to train, I made the weights publicy available so we can download them with <code class="docutils literal notranslate"><span class="pre">torch.hub</span></code>:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">weights_url</span> <span class="o">=</span> <span class="s2">&quot;https://mantisshrimp-models.s3.us-east-2.amazonaws.com/weights-384px-adam2%2B%2B.pth.zip&quot;</span>
+<span class="n">state_dict</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">hub</span><span class="o">.</span><span class="n">load_state_dict_from_url</span><span class="p">(</span><span class="n">weights_url</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>Typically inference is done on the cpu, this is why we specify the paramater <code class="docutils literal notranslate"><span class="pre">map_location</span></code> to <code class="docutils literal notranslate"><span class="pre">cpu</span></code> when loading the state dict.</p>
+</div>
+<p>Let’s recreate the model and load the downloaded weights:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MantisFasterRCNN</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">pets</span><span class="o">.</span><span class="n">CATEGORIES</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The first step for prediction is to have some images, let’s grab some random ones from the validation dataset:</p>
+</div>
+<div class="section" id="Predict-all-at-once">
+<h3>Predict all at once<a class="headerlink" href="#Predict-all-at-once" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">samples</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Every model has a <code class="docutils literal notranslate"><span class="pre">predict</span></code> method, the first argument should always be the a list of images, the other parameters might vary a bit and are specific to the model you’re using. For <code class="docutils literal notranslate"><span class="pre">FasterRCNN</span></code> we have <code class="docutils literal notranslate"><span class="pre">detection_threshold</span></code>, which specifies how confident the model should be to output a bounding box.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">detection_threshold</span><span class="o">=.</span><span class="mi">8</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<p>For showing a single prediction we can use <code class="docutils literal notranslate"><span class="pre">show_pred</span></code>, and if you want to plot a grid of images… You already know! <code class="docutils literal notranslate"><span class="pre">partial</span></code> and <code class="docutils literal notranslate"><span class="pre">plot_grid</span></code>!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">show_pred_partials</span> <span class="o">=</span> <span class="p">[</span><span class="n">partial</span><span class="p">(</span><span class="n">show_pred</span><span class="p">,</span> <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">pred</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span> <span class="n">denormalize_fn</span><span class="o">=</span><span class="n">denormalize_imagenet</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">img</span><span class="p">,</span> <span class="n">pred</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">preds</span><span class="p">)]</span>
+<span class="n">plot_grid</span><span class="p">(</span><span class="n">show_pred_partials</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_103_0.png" src="../../_images/tutorials_mantisshrimp_models_faster_rcnn_quickstart_103_0.png" />
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>Try changing the value of <code class="docutils literal notranslate"><span class="pre">detection_threshold</span></code> and observe how the results change.</p>
+</div>
+</div>
+<div class="section" id="Predict-in-chunks">
+<h3>Predict in chunks<a class="headerlink" href="#Predict-in-chunks" title="Permalink to this headline">¶</a></h3>
+<p>Sometimes you just have too many images to predict everything at once, in this scenario you have to split your data and predict in smaller batches. How to achieve this is very specific to your application and it’s up to you, but you still will want to use <code class="docutils literal notranslate"><span class="pre">model.predict</span></code> as it is the base for any approach.</p>
+<p>Let’s imagine we need to predict all images we have on our validation set, this is how a approach with a <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> would look like:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">dl</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_ds</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Important:</strong></p>
+<p>The default <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> tries to collate (combine the items) of the batch in a very specific way, specifying <code class="docutils literal notranslate"><span class="pre">collate_fn=lambda</span> <span class="pre">o:</span> <span class="pre">o</span></code> is saying “whatever you receive as a batch, return it without modifications”.</p>
+</div>
+<p>Then, just write iterate over the dataloader and predict on each batch just like we done before:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">all_preds</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dl</span><span class="p">:</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;img&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+
+    <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">detection_threshold</span><span class="o">=.</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">all_preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Note:</strong></p>
+<p>Keep in mind the above is running on cpu, so it’s going to take a reallyyy long time!</p>
+</div>
+<script type="application/vnd.jupyter.widget-state+json">
+{"e833499e98534c949c7d5d2bf37a6462": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_b0a58c1856cc4a1792994386fd242373", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_28b9fe0bb4794734a021122d8e927ad1", "IPY_MODEL_68b8e3493a824a7da2ed84ccd8f7effc"]}}, "b0a58c1856cc4a1792994386fd242373": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "28b9fe0bb4794734a021122d8e927ad1": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_519dc83e6d28408b8a02a18a2c0d19c6", "_dom_classes": [], "description": "100%", "_model_name": "FloatProgressModel", "bar_style": "", "max": 791918971, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 791918971, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_d1716b10c8e348a3af217862c6e5789a"}}, "68b8e3493a824a7da2ed84ccd8f7effc": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_8de9a67c353c47d48899de295759a11f", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 791918971/791918971 [00:30&lt;00:00, 80461228.25B/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_a4a50126243b4719b1a19e667f7c6142"}}, "519dc83e6d28408b8a02a18a2c0d19c6": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "d1716b10c8e348a3af217862c6e5789a": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "8de9a67c353c47d48899de295759a11f": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "a4a50126243b4719b1a19e667f7c6142": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "6d22c330aea1460fbaf342fda25c9752": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_69ab73bf09784fffa7c43718730a662c", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_24b748f8d7934ae7b67401cd7839a9ff", "IPY_MODEL_aaf827be56b140c4a250c0c999549be5"]}}, "69ab73bf09784fffa7c43718730a662c": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "24b748f8d7934ae7b67401cd7839a9ff": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_10e9f2430d574563a5f8b0861cea5eb6", "_dom_classes": [], "description": "100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 19173078, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 19173078, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_800fab25029a4348950e8bdb37bef798"}}, "aaf827be56b140c4a250c0c999549be5": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_631e2f5fed35475e8b510c7b0b897b2f", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 19173078/19173078 [00:00&lt;00:00, 51669752.51B/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_c037a3aad6624f90a1fe9fa677a778f0"}}, "10e9f2430d574563a5f8b0861cea5eb6": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "800fab25029a4348950e8bdb37bef798": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "631e2f5fed35475e8b510c7b0b897b2f": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "c037a3aad6624f90a1fe9fa677a778f0": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "d0051d8702014f4fa69415eb6b1e237b": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_6359e0454d18419c8f29d4866a58205f", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_6cf7eb5f0ada4ec9b168c4f7098bafdf", "IPY_MODEL_a1c0106a5e9444b0aef00db6db2dbf1a"]}}, "6359e0454d18419c8f29d4866a58205f": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "6cf7eb5f0ada4ec9b168c4f7098bafdf": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_f846c777e44b4c39b509b53b54bf3026", "_dom_classes": [], "description": "100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 3686, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 3686, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_e601866a7d4c41a9aa0a0575cb20f2cf"}}, "a1c0106a5e9444b0aef00db6db2dbf1a": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_3a65b230b0dd4e1a8f6a2d1fabd86e16", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 3686/3686 [00:00&lt;00:00, 8669.54it/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_81b5a39bf0d64ee9a2a0cab153227b68"}}, "f846c777e44b4c39b509b53b54bf3026": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "e601866a7d4c41a9aa0a0575cb20f2cf": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "3a65b230b0dd4e1a8f6a2d1fabd86e16": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "81b5a39bf0d64ee9a2a0cab153227b68": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "d6f541a28db64ef481a5d7f33e26b28c": {"model_module": "@jupyter-widgets/controls", "model_name": "HBoxModel", "state": {"_view_name": "HBoxView", "_dom_classes": [], "_model_name": "HBoxModel", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.5.0", "box_style": "", "layout": "IPY_MODEL_828a3922aaff45818fa8a57bd1ab8de2", "_model_module": "@jupyter-widgets/controls", "children": ["IPY_MODEL_7c77c1834eba4c8fbe4f8c0871d507fe", "IPY_MODEL_a901779e52114b55830822d59ef5d9c3"]}}, "828a3922aaff45818fa8a57bd1ab8de2": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "7c77c1834eba4c8fbe4f8c0871d507fe": {"model_module": "@jupyter-widgets/controls", "model_name": "FloatProgressModel", "state": {"_view_name": "ProgressView", "style": "IPY_MODEL_1e730991904648d1b69bc6696cb6f9a0", "_dom_classes": [], "description": "100%", "_model_name": "FloatProgressModel", "bar_style": "success", "max": 167502836, "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": 167502836, "_view_count": null, "_view_module_version": "1.5.0", "orientation": "horizontal", "min": 0, "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_8e06eacd1a6745baaa528a51bd70d31c"}}, "a901779e52114b55830822d59ef5d9c3": {"model_module": "@jupyter-widgets/controls", "model_name": "HTMLModel", "state": {"_view_name": "HTMLView", "style": "IPY_MODEL_5004cb73012a440fa3231b06d31e21e4", "_dom_classes": [], "description": "", "_model_name": "HTMLModel", "placeholder": "\u200b", "_view_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "value": " 160M/160M [01:30&lt;00:00, 1.84MB/s]", "_view_count": null, "_view_module_version": "1.5.0", "description_tooltip": null, "_model_module": "@jupyter-widgets/controls", "layout": "IPY_MODEL_f43e895ba6b84e368fe906b37112d2bd"}}, "1e730991904648d1b69bc6696cb6f9a0": {"model_module": "@jupyter-widgets/controls", "model_name": "ProgressStyleModel", "state": {"_view_name": "StyleView", "_model_name": "ProgressStyleModel", "description_width": "initial", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "bar_color": null, "_model_module": "@jupyter-widgets/controls"}}, "8e06eacd1a6745baaa528a51bd70d31c": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}, "5004cb73012a440fa3231b06d31e21e4": {"model_module": "@jupyter-widgets/controls", "model_name": "DescriptionStyleModel", "state": {"_view_name": "StyleView", "_model_name": "DescriptionStyleModel", "description_width": "", "_view_module": "@jupyter-widgets/base", "_model_module_version": "1.5.0", "_view_count": null, "_view_module_version": "1.2.0", "_model_module": "@jupyter-widgets/controls"}}, "f43e895ba6b84e368fe906b37112d2bd": {"model_module": "@jupyter-widgets/base", "model_name": "LayoutModel", "state": {"_view_name": "LayoutView", "grid_template_rows": null, "right": null, "justify_content": null, "_view_module": "@jupyter-widgets/base", "overflow": null, "_model_module_version": "1.2.0", "_view_count": null, "flex_flow": null, "width": null, "min_width": null, "border": null, "align_items": null, "bottom": null, "_model_module": "@jupyter-widgets/base", "top": null, "grid_column": null, "overflow_y": null, "overflow_x": null, "grid_auto_flow": null, "grid_area": null, "grid_template_columns": null, "flex": null, "_model_name": "LayoutModel", "justify_items": null, "grid_row": null, "max_height": null, "align_content": null, "visibility": null, "align_self": null, "height": null, "min_height": null, "padding": null, "grid_auto_rows": null, "grid_gap": null, "max_width": null, "order": null, "_view_module_version": "1.2.0", "grid_template_areas": null, "object_position": null, "object_fit": null, "grid_auto_columns": null, "margin": null, "display": null, "left": null}}}
+</script></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../mantisshrimp_data/intro_parser.html" class="btn btn-neutral float-right" title="1. Intro to Mantisshrimp Parsers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="faster_rcnn_adv.html" class="btn btn-neutral float-left" title="Faster RCNN Advanced Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Lucas Goulart Vazquez
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
